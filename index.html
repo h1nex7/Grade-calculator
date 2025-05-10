@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Калькулятор для расчета среднего балла по оценкам">
+    <title>Калькулятор оценок</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            line-height: 1.5;
+            -webkit-text-size-adjust: 100%;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-top: 0;
+            font-size: 1.8rem;
+        }
+        .calculator {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .input-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        label {
+            width: 120px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100px;
+            font-size: 16px;
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            width: 100%;
+            transition: background-color 0.3s;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        button:active, button:focus {
+            outline: none;
+            background-color: #3d8b40;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9f7ef;
+            border-radius: 4px;
+            display: none;
+            font-size: 16px;
+        }
+        .grade-input {
+            margin-left: 10px;
+        }
+        
+        /* Адаптивность для мобильных устройств */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .calculator {
+                padding: 15px;
+            }
+            .input-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            label {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            .grade-input {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Калькулятор оценок</h1>
+    <div class="calculator">
+        <div class="input-group">
+            <label for="fives">Пятёрок:</label>
+            <input type="number" id="fives" class="grade-input" min="0" value="0">
+        </div>
+        <div class="input-group">
+            <label for="fours">Четвёрок:</label>
+            <input type="number" id="fours" class="grade-input" min="0" value="0">
+        </div>
+        <div class="input-group">
+            <label for="threes">Троек:</label>
+            <input type="number" id="threes" class="grade-input" min="0" value="0">
+        </div>
+        <div class="input-group">
+            <label for="twos">Двоек:</label>
+            <input type="number" id="twos" class="grade-input" min="0" value="0">
+        </div>
+        
+        <button id="calculate-btn">Вычислить средний балл</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calculateBtn = document.getElementById('calculate-btn');
+            const resultElement = document.getElementById('result');
+            
+            function calculateAverage() {
+                // Получаем элементы input
+                const fivesInput = document.getElementById('fives');
+                const foursInput = document.getElementById('fours');
+                const threesInput = document.getElementById('threes');
+                const twosInput = document.getElementById('twos');
+                
+                // Получаем значения и преобразуем в числа
+                const fives = parseInt(fivesInput.value) || 0;
+                const fours = parseInt(foursInput.value) || 0;
+                const threes = parseInt(threesInput.value) || 0;
+                const twos = parseInt(twosInput.value) || 0;
+                
+                // Проверяем, что введены хотя бы какие-то оценки
+                const totalGrades = fives + fours + threes + twos;
+                
+                if (totalGrades === 0) {
+                    resultElement.innerHTML = "Пожалуйста, введите хотя бы одну оценку.";
+                    resultElement.style.display = "block";
+                    return;
+                }
+                
+                // Вычисляем средний балл
+                const average = (fives * 5 + fours * 4 + threes * 3 + twos * 2) / totalGrades;
+                
+                // Форматируем вывод
+                let resultText = `Средний балл: <strong>${average.toFixed(2)}</strong><br>`;
+                resultText += `Всего оценок: ${totalGrades}`;
+                
+                // Выводим результат
+                resultElement.innerHTML = resultText;
+                resultElement.style.display = "block";
+            }
+            
+            // Обработчик для кнопки
+            calculateBtn.addEventListener('click', calculateAverage);
+            
+            // Обработчик для клавиши Enter
+            document.querySelectorAll('.grade-input').forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        calculateAverage();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
